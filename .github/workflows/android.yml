@@ -22,7 +22,7 @@ jobs:
       - name: Build
         run: |
           sudo apt update
-          sudo apt install -y meson libxrandr-dev libxxf86vm-dev libxcb-*-dev libx11-xcb-dev libxfixes-dev libdrm-dev libx11-dev
+          sudo apt install -y meson libxrandr-dev libxxf86vm-dev libxcb-*-dev libx11-xcb-dev libxfixes-dev libdrm-dev libx11-dev llvm
           pip3 install mako
           export ANDROID_NDK_HOME="$ANDROID_SDK_ROOT/ndk-bundle"
           envsubst <android-drm-${{matrix.arch}} >build-crossfile-drm
@@ -47,7 +47,7 @@ jobs:
             --prefix=/tmp/pan \
             --cross-file "build-crossfile" \
             -Dplatforms=android \
-            -Dplatform-sdk-version=26 \
+            -Dplatform-sdk-version=25 \
             -Dandroid-stub=true \
             -Dllvm=disabled \
             -Dxlib-lease=disabled \
@@ -60,6 +60,16 @@ jobs:
             -Dgallium-drivers=swrast,panfrost \
             -Dshared-glapi=false
           ninja -C "build-android" install
+          # cp "build-android-${{matrix.arch}}/src/gallium/drivers/zink/libzink.a" /tmp/zink/lib/
+          mv /tmp/pan/lib/libOSMesa.so.8.0.0 /tmp/pan/lib/libOSMesa.so.8
+          cp /tmp/pan/lib/libOSMesa.so.8 /tmp/pan/lib/libOSMesa_unstripped.so.8
+      - name: striping
+        run: |
+          if [ "${{matrix.arch}}" == "arm32" ]; then
+          llvm-strip --strip-all  /tmp/pan/lib/libOSMesa_unstripped.so.8
+          else
+          llvm-strip --strip-all /tmp/pan/lib/libOSMesa_unstripped.so.8
+          fi
       - name: Upload libraries
         uses: actions/upload-artifact@v2
         with:
