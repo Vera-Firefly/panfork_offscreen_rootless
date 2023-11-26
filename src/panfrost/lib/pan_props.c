@@ -95,7 +95,8 @@ panfrost_get_model(uint32_t gpu_id)
                 if (panfrost_model_list[i].gpu_id == gpu_id)
                         return &panfrost_model_list[i];
         }
-};
+        return;
+}
 
 /* Abstraction over the raw drm_panfrost_get_param ioctl for fetching
  * information about devices */
