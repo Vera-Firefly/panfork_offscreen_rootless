@@ -76,15 +76,8 @@ const struct panfrost_model panfrost_model_list[] = {
         MODEL(0xa867, "G610", "LODx", HAS_ANISO, 65536, {}),
         /* Matching the kbase dummy model, probably not real GPUs */
         MODEL(0xa802, "G710", "TODx", HAS_ANISO, 65536, {}),
-};
-
-const struct panfrost_model panfrost_unknown_model = {
-   .gpu_id = 0,
-   .name = "Unknowm Mali device (Panfrost)",
-   .performance_counters = "AAAA",
-   .min_rev_anisotropic = NO_ANISO, 
-   .tilebuffer_size = 8192, 
-   .quirks = {}, 
+        /* Unknowm Mali device */
+        MODEL(0, "Unknowm", "AAAA", NO_ANISO, 8192, {}),
 };
 
 #undef NO_ANISO
@@ -98,13 +91,12 @@ const struct panfrost_model panfrost_unknown_model = {
 const struct panfrost_model *
 panfrost_get_model(uint32_t gpu_id)
 {
-        
         for (unsigned i = 0; i < ARRAY_SIZE(panfrost_model_list); ++i) {
                 if (panfrost_model_list[i].gpu_id == gpu_id)
                         return &panfrost_model_list[i];
         }
 
-        return &panfrost_unknown_model;
+        return NULL;
 }
 
 /* Abstraction over the raw drm_panfrost_get_param ioctl for fetching
