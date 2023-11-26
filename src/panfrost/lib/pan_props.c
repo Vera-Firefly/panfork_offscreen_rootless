@@ -80,6 +80,15 @@ const struct panfrost_model panfrost_model_list[] = {
         MODEL(0, "Unknowm", "AAAA", NO_ANISO, 8192, {}),
 };
 
+const struct panfrost_model panfrost_unknown_model = {
+   .gpu_id = 0,
+   .name = "Unknowm Mali device (Panfrost)",
+   .performance_counters = "AAAA",
+   .min_rev_anisotropic = NO_ANISO, 
+   .tilebuffer_size = 8192, 
+   .quirks = {}, 
+};
+
 #undef NO_ANISO
 #undef HAS_ANISO
 #undef MODEL
@@ -95,7 +104,7 @@ panfrost_get_model(uint32_t gpu_id)
                 if (panfrost_model_list[i].gpu_id == gpu_id)
                         return &panfrost_model_list[i];
         }
-        return;
+        return &panfrost_unknown_model;
 }
 
 /* Abstraction over the raw drm_panfrost_get_param ioctl for fetching
