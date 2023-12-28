@@ -44,10 +44,10 @@ jobs:
           cd ..
           envsubst <android-${{matrix.arch}} >build-crossfile
           meson setup "build-android" \
-            --prefix=/tmp/pan \
+            --prefix=/tmp/mesa \
             --cross-file "build-crossfile" \
             -Dplatforms=android \
-            -Dplatform-sdk-version=25 \
+            -Dplatform-sdk-version=26 \
             -Dandroid-stub=true \
             -Dllvm=disabled \
             -Dxlib-lease=disabled \
@@ -57,21 +57,21 @@ jobs:
             -Dopengl=true \
             -Dosmesa=true \
             -Dvulkan-drivers= \
-            -Dgallium-drivers=swrast,panfrost \
+            -Dgallium-drivers=swrast,panfrost,zink \
             -Dshared-glapi=false
           ninja -C "build-android" install
           # cp "build-android-${{matrix.arch}}/src/gallium/drivers/zink/libzink.a" /tmp/zink/lib/
-          mv /tmp/pan/lib/libOSMesa.so.8.0.0 /tmp/pan/lib/libOSMesa.so.8
-          cp /tmp/pan/lib/libOSMesa.so.8 /tmp/pan/lib/libOSMesa_pan.so
+          mv /tmp/mesa/lib/libOSMesa.so.8.0.0 /tmp/mesa/lib/libOSMesa.so.8
+          cp /tmp/mesa/lib/libOSMesa.so.8 /tmp/mesa/lib/libOSMesa_8.so
       - name: striping
         run: |
           if [ "${{matrix.arch}}" == "arm32" ]; then
-          llvm-strip --strip-all  /tmp/pan/lib/libOSMesa_pan.so
+          llvm-strip --strip-all  /tmp/mesa/lib/libOSMesa_8.so
           else
-          llvm-strip --strip-all /tmp/pan/lib/libOSMesa_pan.so
+          llvm-strip --strip-all /tmp/mesa/lib/libOSMesa_8.so
           fi
       - name: Upload libraries
         uses: actions/upload-artifact@v2
         with:
           name: panfrost_${{matrix.arch}}
-          path: /tmp/pan/lib/libOSMesa_pan.so
+          path: /tmp/mesa/lib/libOSMesa_8.so
