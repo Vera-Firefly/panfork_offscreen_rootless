@@ -57,7 +57,7 @@ jobs:
             -Dopengl=true \
             -Dosmesa=true \
             -Dvulkan-drivers= \
-            -Dgallium-drivers=swrast,panfrost \
+            -Dgallium-drivers=zink,swrast,panfrost \
             -Dshared-glapi=false
           ninja -C "build-android" install
           # cp "build-android-${{matrix.arch}}/src/gallium/drivers/zink/libzink.a" /tmp/zink/lib/
